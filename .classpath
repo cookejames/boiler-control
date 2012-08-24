@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="libs/commonsio24.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/framboos-0.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/mysql-connector-java-5.1.21-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/raspberrygpio.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
