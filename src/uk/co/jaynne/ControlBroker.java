@@ -2,6 +2,7 @@ package uk.co.jaynne;
 
 import java.util.Calendar;
 
+import uk.co.jaynne.dataobjects.ConfigObject;
 import uk.co.jaynne.datasource.ConfigSqlSource;
 import uk.co.jaynne.datasource.interfaces.ConfigSource;
 import uk.co.jaynne.gpio.GpioControl;
@@ -11,12 +12,6 @@ import uk.co.jaynne.gpio.GpioPin;
 public class ControlBroker {
 	private boolean heatingOn;
 	private boolean waterOn;
-	private boolean waterBoost;
-	private int waterBoostFinish;
-	private boolean heatingBoost;
-	private int heatingBoostFinish;
-	private static int minsInHour = 60; 
-	private static int minsInDay = 24 * minsInHour; 
 	public static GpioPin RED_LED = GpioPin.PIN8_GPIO14; //TODO get from DB
 	public static GpioPin BLUE_LED = GpioPin.PIN10_GPIO15;
 	public static GpioPin SWITCH1 = GpioPin.PIN12_GPIO18;
@@ -34,10 +29,6 @@ public class ControlBroker {
 		
 		heatingOn = false;
 		waterOn = false;
-		waterBoost = false;
-		waterBoostFinish = 0;
-		heatingBoost = false;
-		heatingBoostFinish = 0;
 		
     	//Start with water and heating off incase they have been left in an improper state
 		deactivateHeating();
@@ -75,7 +66,7 @@ public class ControlBroker {
 		if (!heatingOn) {
 			return true;
 		}
-		if (heatingBoost) { //don't turn off if boosted
+		if (isHeatingBoostOn()) { //don't turn off if boosted
 			return false;
 		}
 		return deactivateHeating();
@@ -111,7 +102,7 @@ public class ControlBroker {
 		if (!waterOn) {
 			return true;
 		}
-		if (waterBoost) {
+		if (isWaterBoostOn()) {
 			return false;
 		}
 		return deactivateWater();
@@ -130,53 +121,81 @@ public class ControlBroker {
 	}
 	
 	public void toggleWaterBoostStatus() {
+		boolean waterBoost = isWaterBoostOn();
 		if (waterBoost) {
 			System.out.println("**WATER BOOST TOGGLED OFF**");
-			waterBoost = !waterBoost;
+			config.set("waterBoost", !waterBoost);
 		} else {
 			System.out.println("**WATER BOOST TOGGLED ON**");
-			int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-			int minute = Calendar.getInstance().get(Calendar.MINUTE);
 			
-			int thisminute = hour * minsInHour + minute;
-			int boostTime = config.get("boostTime").getIntValue();
-			waterBoostFinish = thisminute + boostTime % minsInDay;
-			waterBoost = !waterBoost;
+			long thistime = Calendar.getInstance().getTimeInMillis();
+			int boostTimeInMins = config.get("boostTime").getIntValue();
+			long boostTimeInMillis = boostTimeInMins * 60 * 1000;
+			config.set("waterBoostOffTime", thistime + boostTimeInMillis);
+			config.set("waterBoost", !waterBoost);
 			turnWaterOn();
 		}
 	}
 	
-	public int getWaterBoostOffTime() {
-		return waterBoostFinish;
+	/**
+	 * Gets the water boost off time in millis since the 'epoch'
+	 * @return long
+	 */
+	public long getWaterBoostOffTime() {
+		ConfigObject time = config.get("waterBoostOffTime");
+		if (time != null) {
+			return time.getLongValue();
+		} else {
+			return 0;
+		}
 	}
 	
 	public boolean isWaterBoostOn() {
-		return waterBoost;
+		ConfigObject water = config.get("waterBoost");
+		if (water == null) {
+			return false;
+		} else {
+			return water.getBoolValue();
+		}
 	}
 	
 	public void toggleHeatingBoostStatus() {
+		boolean heatingBoost = isHeatingBoostOn();
 		if (heatingBoost) {
 			System.out.println("**HEATING BOOST TOGGLED OFF**");
-			heatingBoost = !heatingBoost;
+			config.set("heatingBoost", !heatingBoost);
 		} else {
 			System.out.println("**HEATING BOOST TOGGLED ON**");
-			int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-			int minute = Calendar.getInstance().get(Calendar.MINUTE);
 			
-			int thisminute = hour * minsInHour + minute;
-			int boostTime = config.get("boostTime").getIntValue();
-			heatingBoostFinish = thisminute + boostTime % minsInDay;
-			heatingBoost = !heatingBoost;
+			long thistime = Calendar.getInstance().getTimeInMillis();
+			int boostTimeInMins = config.get("boostTime").getIntValue();
+			long boostTimeInMillis = boostTimeInMins * 60 * 1000;
+			config.set("heatingBoostOffTime", thistime + boostTimeInMillis);
+			config.set("heatingBoost", !heatingBoost);
 			turnHeatingOn();
 		}
 	}
 	
-	public int getHeatingBoostOffTime() {
-		return heatingBoostFinish;
+	/**
+	 * Gets the water boost off time in millis since the 'epoch'
+	 * @return long
+	 */
+	public long getHeatingBoostOffTime() {
+		ConfigObject time = config.get("heatingBoostOffTime");
+		if (time != null) {
+			return time.getLongValue();
+		} else {
+			return 0;
+		}
 	}
 	
 	public boolean isHeatingBoostOn() {
-		return heatingBoost;
+		ConfigObject heating = config.get("heatingBoost");
+		if (heating == null) {
+			return false;
+		} else {
+			return heating.getBoolValue();
+		}
 	}
 	
 	public boolean isHeatingOn() {

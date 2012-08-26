@@ -8,19 +8,24 @@ public class ScheduleObject implements Comparable<ScheduleObject>{
 	private int id = 0;
 	private int group = 0;
 	private int day = 0;
+	private int hourOn = 0;
 	private int minuteOn = 0;
+	private int hourOff = 0;
 	private int minuteOff = 0;
 	private boolean heatingOn = false;
 	private boolean waterOn = false;
 	private boolean enabled = false;
 	
 	
-	public ScheduleObject(int id, int group, int day, int minuteOn, int minuteOff, 
-			boolean heatingOn, boolean waterOn, boolean enabled) {
+	public ScheduleObject(int id, int group, int day, int hourOn, int minuteOn, 
+			int hourOff, int minuteOff, boolean heatingOn, boolean waterOn, 
+			boolean enabled) {
 		this.id = id;
 		this.group = group;
 		this.day = day;
+		this.hourOn = hourOn;
 		this.minuteOn = minuteOn;
+		this.hourOff = hourOff;
 		this.minuteOff = minuteOff;
 		this.heatingOn = heatingOn;
 		this.waterOn = waterOn;
@@ -41,6 +46,22 @@ public class ScheduleObject implements Comparable<ScheduleObject>{
 	 */
 	public int getDay() {
 		return day;
+	}
+
+
+	/**
+	 * @return the hourOn
+	 */
+	public int getHourOn() {
+		return hourOn;
+	}
+
+
+	/**
+	 * @return the hourOff
+	 */
+	public int getHourOff() {
+		return hourOff;
 	}
 
 
@@ -106,8 +127,8 @@ public class ScheduleObject implements Comparable<ScheduleObject>{
 	}
 	
 	public String toString() {
-		return "Day:" + day + " Minute On:" + minuteOn + " Minute Off:" + 
-				minuteOff + " Heating On:" + heatingOn + " Water On:" + 
+		return "Day:" + day + " Time On:" + hourOn + ":" + minuteOn + " Time Off:" + 
+				hourOff + ":" + minuteOff + " Heating On:" + heatingOn + " Water On:" + 
 				waterOn + " Group:" + group + " Enabled:" + enabled;
 	}
 }

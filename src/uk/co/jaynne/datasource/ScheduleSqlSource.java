@@ -17,12 +17,14 @@ public class ScheduleSqlSource implements ScheduleSource{
 	private static String ID = "id"; 
 	private static String GROUP = "group";
 	private static String DAY = "day";
+	private static String HOURON = "hourOn";
 	private static String MINUTEON = "minuteOn";
+	private static String HOUROFF = "hourOff";
 	private static String MINUTEOFF = "minuteOff";
 	private static String HEATINGON = "heatingOn";
 	private static String WATERON = "waterOn";
 	private static String ENABLED = "enabled";
-	private static int MINUTES_IN_DAY = 24 * 60;
+	private static int MINUTES_IN_HOUR = 60;
 
 	
 	public ScheduleObject getById(int id) {
@@ -74,7 +76,9 @@ public class ScheduleSqlSource implements ScheduleSource{
 					rs.getInt(ID), 
 					rs.getInt(GROUP), 
 					rs.getInt(DAY),
+					rs.getInt(HOURON),
 					rs.getInt(MINUTEON),
+					rs.getInt(HOUROFF),
 					rs.getInt(MINUTEOFF),
 					rs.getBoolean(HEATINGON),
 					rs.getBoolean(WATERON),
@@ -93,7 +97,9 @@ public class ScheduleSqlSource implements ScheduleSource{
 		}
 		 sql += "SET `" + DAY + "` = '" + schedule.getDay() + "', " +
 				 "`" + GROUP + "` = '" + schedule.getGroup() + "', " +
+				 "`" + HOURON + "` = '" + schedule.getHourOn() + "', " +
 				 "`" + MINUTEON + "` = '" + schedule.getMinuteOn() + "', " +
+				 "`" + HOUROFF + "` = '" + schedule.getHourOff() + "', " +
 				 "`" + MINUTEOFF + "` = '" + schedule.getMinuteOff() + "', " +
 				 "`" + HEATINGON + "` = '" + (schedule.getHeatingOn() ? 1 : 0) + "', " +
 				 "`" + WATERON + "` = '" + (schedule.getWaterOn() ? 1 : 0) + "', " +
@@ -144,10 +150,10 @@ public class ScheduleSqlSource implements ScheduleSource{
 	 * @return if schedule is valid
 	 */
 	private boolean validateSchedule(ScheduleObject schedule) {
-		if (schedule.getMinuteOff() < schedule.getMinuteOn() || 
+		if (schedule.getHourOff() < schedule.getHourOn() || 
 				schedule.getDay() < 1 || schedule.getDay() > 7 ||
-				schedule.getMinuteOn() < 0 || schedule.getMinuteOn() > MINUTES_IN_DAY || 
-				schedule.getMinuteOff() < 0 || schedule.getMinuteOff() > MINUTES_IN_DAY ) {
+				schedule.getMinuteOn() < 0 || schedule.getMinuteOn() >= MINUTES_IN_HOUR || 
+				schedule.getMinuteOff() < 0 || schedule.getMinuteOff() >= MINUTES_IN_HOUR ) {
 			return false;
 		} else {
 			return true;

@@ -30,9 +30,8 @@ public class Scheduler extends Thread{
 			}
 			
 			System.out.println("Time: " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
-			System.out.println("Minute Of Day: " + minute);
-			System.out.println("Water Boost is: " + control.isWaterBoostOn() + " Water Boost Finish Minute: " + control.getWaterBoostOffTime());
-			System.out.println("Heating Boost is: " + control.isHeatingBoostOn() + " Heating Boost Finish Minute: " + control.getHeatingBoostOffTime());
+			System.out.println("Water Boost is: " + control.isWaterBoostOn() + " Water Boost Finish: " + control.getWaterBoostOffTime());
+			System.out.println("Heating Boost is: " + control.isHeatingBoostOn() + " Heating Boost Finish: " + control.getHeatingBoostOffTime());
 			
 			//Loop through all of todays schedules
 			for (ScheduleObject schedule : schedules) {
@@ -40,7 +39,9 @@ public class Scheduler extends Thread{
 					System.out.print("*");
 					System.out.print(schedule);
 					//if in active period
-					if (minute >= schedule.getMinuteOn() && minute <= schedule.getMinuteOff()) {
+					int timeOnMins = (schedule.getHourOn() * 60) + schedule.getMinuteOn();
+					int timeOffMins = (schedule.getHourOff() * 60) + schedule.getMinuteOff();
+					if (minute >= timeOnMins && minute <= timeOffMins) {
 						System.out.print(" **ACTIVE**");
 						//Only update the h/w status if they are false
 						heating = (heating) ? heating : schedule.getHeatingOn();
@@ -58,7 +59,7 @@ public class Scheduler extends Thread{
 			if (heating) {
 				control.turnHeatingOn();
 			} else { //heating isn't on check boost status
-				if (control.isHeatingBoostOn() && minute > control.getHeatingBoostOffTime()) {
+				if (control.isHeatingBoostOn() && calendar.getTimeInMillis() > control.getHeatingBoostOffTime()) {
 					control.toggleHeatingBoostStatus();
 				}
 				control.turnHeatingOff();
@@ -66,7 +67,7 @@ public class Scheduler extends Thread{
 			if (water) {
 				control.turnWaterOn();
 			} else { //water isn't on check boost status
-				if (control.isWaterBoostOn() && minute > control.getWaterBoostOffTime()) {
+				if (control.isWaterBoostOn() && calendar.getTimeInMillis() > control.getWaterBoostOffTime()) {
 					control.toggleWaterBoostStatus();
 				}
 				control.turnWaterOff();

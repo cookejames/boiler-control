@@ -36,6 +36,9 @@ public class ConfigSqlSource implements ConfigSource{
 					case "int": 
 						object = new ConfigObject(key, Integer.parseInt(value));
 						break;
+					case "long": 
+						object = new ConfigObject(key, Long.parseLong(value));
+						break;
 					case "boolean": 
 						object = new ConfigObject(key, Boolean.parseBoolean(value));
 						break;
@@ -89,4 +92,12 @@ public class ConfigSqlSource implements ConfigSource{
 	public int set(String key, boolean value) {
 		return set(key, Boolean.toString(value), "boolean");
 	}
+	
+	/**
+	 * Update a long item
+	 * @param key the items key
+	 */
+	public int set(String key, long value) {
+		return set(key, Long.toString(value), "long");
+	}	
 }

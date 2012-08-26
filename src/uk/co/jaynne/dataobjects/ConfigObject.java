@@ -10,6 +10,7 @@ public class ConfigObject {
 	private String stringValue = null;
 	private boolean boolValue = false;
 	private int intValue = 0;
+	private long longValue = 0;
 	
 	/**
 	 * Create a config item with a string type
@@ -34,6 +35,12 @@ public class ConfigObject {
 		this.type = "int";
 		this.intValue = intValue;
 	}
+	
+	public ConfigObject(String key, long longValue) {
+		this.key = key;
+		this.type = "int";
+		this.longValue = longValue;
+	}
 
 	public String getKey() {
 		return key;
@@ -53,5 +60,9 @@ public class ConfigObject {
 
 	public int getIntValue() {
 		return intValue;
+	}
+	
+	public long getLongValue() {
+		return longValue;
 	}
 }

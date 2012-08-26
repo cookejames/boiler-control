@@ -14,4 +14,6 @@ public interface ConfigSource {
 	public int set(String key, int value);
 	
 	public int set(String key, boolean value);
+	
+	public int set(String key, long value);
 }
