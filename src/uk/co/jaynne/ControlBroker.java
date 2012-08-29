@@ -10,14 +10,12 @@ import uk.co.jaynne.gpio.GpioControlFramboos;
 import uk.co.jaynne.gpio.GpioPin;
 
 public class ControlBroker {
-	private boolean heatingOn;
-	private boolean waterOn;
-	public static GpioPin RED_LED = GpioPin.PIN8_GPIO14; //TODO get from DB
-	public static GpioPin BLUE_LED = GpioPin.PIN10_GPIO15;
+	public static GpioPin RELAY1 = GpioPin.PIN8_GPIO14; //TODO get from DB
+	public static GpioPin RELAY2 = GpioPin.PIN10_GPIO15;
 	public static GpioPin SWITCH1 = GpioPin.PIN12_GPIO18;
 	public static GpioPin SWITCH2 = GpioPin.PIN13_GPIO21;
-	private boolean LED_ON = false;
-	private boolean LED_OFF = true;
+	private static boolean RELAY_ON = false;
+	private static boolean RELAY_OFF = true;
 	private ConfigSource config;
 	
 	
@@ -26,9 +24,6 @@ public class ControlBroker {
 	private ControlBroker() {
 		gpio = GpioControlFramboos.getInstance();
 		config = new ConfigSqlSource();
-		
-		heatingOn = false;
-		waterOn = false;
 		
     	//Start with water and heating off incase they have been left in an improper state
 		deactivateHeating();
@@ -45,7 +40,7 @@ public class ControlBroker {
 	
 	public boolean turnHeatingOn() {
 		//check if the heating is already on
-		if (heatingOn) {
+		if (isHeatingOn()) {
 			return true;
 		} // don't turn on if this is a holiday period
 		if (isHolidayPeriod()) {
@@ -56,14 +51,14 @@ public class ControlBroker {
 	}
 	
 	private boolean activateHeating() {
-		gpio.setValue(BLUE_LED, LED_ON);
-		heatingOn = true;
+		gpio.setValue(RELAY2, RELAY_ON);
+		config.set("heatingStatus", true);
 		System.out.println("**HEATING ON, ITS GONA GET TOASTY**");
 		return true;
 	}
 	
 	public boolean turnHeatingOff() {
-		if (!heatingOn) {
+		if (!isHeatingOn()) {
 			return true;
 		}
 		if (isHeatingBoostOn()) { //don't turn off if boosted
@@ -73,15 +68,15 @@ public class ControlBroker {
 	}
 	
 	private boolean deactivateHeating() {
-		gpio.setValue(BLUE_LED, LED_OFF);
-		heatingOn = false;
+		gpio.setValue(RELAY2, RELAY_OFF);
+		config.set("heatingStatus", false);
 		System.out.println("**HEATING OFF, BRR**");
 		return true;
 	}
 	
 	public boolean turnWaterOn() {
 		//check if the water is already on
-		if (waterOn) {
+		if (isWaterOn()) {
 			return true;
 		} // don't turn on if this is a holiday period
 		if (isHolidayPeriod()) {
@@ -92,14 +87,14 @@ public class ControlBroker {
 	}
 	
 	private boolean activateWater() {
-		gpio.setValue(RED_LED, LED_ON);
-		waterOn = true;
+		gpio.setValue(RELAY1, RELAY_ON);
+		config.set("waterStatus", true);
 		System.out.println("**WATER ON, YOU CAN SHOWER IN A BIT**");
 		return true;
 	}
 	
 	public boolean turnWaterOff() {
-		if (!waterOn) {
+		if (!isWaterOn()) {
 			return true;
 		}
 		if (isWaterBoostOn()) {
@@ -109,15 +104,14 @@ public class ControlBroker {
 	}
 	
 	private boolean deactivateWater() {
-		gpio.setValue(RED_LED, LED_OFF);
-		waterOn = false;
+		gpio.setValue(RELAY1, RELAY_OFF);
+		config.set("waterStatus", false);
 		System.out.println("**WATER OFF, BETTER BE CLEAN ALREADY**");
 		return true;
 	}
 	
 	public boolean isHolidayPeriod(){
-		//TODO
-		return false;
+		return Calendar.getInstance().getTimeInMillis() < config.get("holidayUntil").getLongValue();
 	}
 	
 	public void toggleWaterBoostStatus() {
@@ -126,6 +120,10 @@ public class ControlBroker {
 			System.out.println("**WATER BOOST TOGGLED OFF**");
 			config.set("waterBoost", !waterBoost);
 		} else {
+			if (isHolidayPeriod()) {
+				System.out.println("**WATER BOOST IS ON HOLIDAY**");
+				return;
+			}
 			System.out.println("**WATER BOOST TOGGLED ON**");
 			
 			long thistime = Calendar.getInstance().getTimeInMillis();
@@ -165,6 +163,10 @@ public class ControlBroker {
 			System.out.println("**HEATING BOOST TOGGLED OFF**");
 			config.set("heatingBoost", !heatingBoost);
 		} else {
+			if (isHolidayPeriod()) {
+				System.out.println("**HEATING BOOST IS ON HOLIDAY**");
+				return;
+			}
 			System.out.println("**HEATING BOOST TOGGLED ON**");
 			
 			long thistime = Calendar.getInstance().getTimeInMillis();
@@ -199,26 +201,26 @@ public class ControlBroker {
 	}
 	
 	public boolean isHeatingOn() {
-		return heatingOn;
+		return config.get("heatingStatus").getBoolValue();
 	}
 	
 	public boolean isWaterOn() {
-		return waterOn;
+		return config.get("waterStatus").getBoolValue();
 	}
 	
 	/**
 	 * Open GPIO connections
 	 */
 	public void open() {
-		gpio.setAsOutput(BLUE_LED);
-		gpio.setAsOutput(RED_LED);
+		gpio.setAsOutput(RELAY2);
+		gpio.setAsOutput(RELAY1);
 	}
 	
 	/**
 	 * Close GPIO connections
 	 */
 	public void close() {
-		gpio.close(BLUE_LED);
-		gpio.close(RED_LED);
+		gpio.close(RELAY2);
+		gpio.close(RELAY1);
 	}
 }

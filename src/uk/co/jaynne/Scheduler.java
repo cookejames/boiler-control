@@ -25,36 +25,35 @@ public class Scheduler extends Thread{
 			//Get the schedules for today
 			SortedSet<ScheduleObject> schedules = ss.getByDay(day);
 			if (schedules == null) {
-				System.out.println("Error accessing data");
-				break;
-			}
-			
-			System.out.println("Time: " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
-			System.out.println("Water Boost is: " + control.isWaterBoostOn() + " Water Boost Finish: " + control.getWaterBoostOffTime());
-			System.out.println("Heating Boost is: " + control.isHeatingBoostOn() + " Heating Boost Finish: " + control.getHeatingBoostOffTime());
-			
-			//Loop through all of todays schedules
-			for (ScheduleObject schedule : schedules) {
-				if (schedule.getEnabled()) { //if enabled
-					System.out.print("*");
-					System.out.print(schedule);
-					//if in active period
-					int timeOnMins = (schedule.getHourOn() * 60) + schedule.getMinuteOn();
-					int timeOffMins = (schedule.getHourOff() * 60) + schedule.getMinuteOff();
-					if (minute >= timeOnMins && minute <= timeOffMins) {
-						System.out.print(" **ACTIVE**");
-						//Only update the h/w status if they are false
-						heating = (heating) ? heating : schedule.getHeatingOn();
-						water = (water) ? water : schedule.getWaterOn();
+				System.out.println("No schedules today");
+			} else {
+				
+				System.out.println("Time: " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+				System.out.println("Water Boost is: " + control.isWaterBoostOn() + " Water Boost Finish: " + control.getWaterBoostOffTime());
+				System.out.println("Heating Boost is: " + control.isHeatingBoostOn() + " Heating Boost Finish: " + control.getHeatingBoostOffTime());
+				
+				//Loop through all of todays schedules
+				for (ScheduleObject schedule : schedules) {
+					if (schedule.getEnabled()) { //if enabled
+						System.out.print("*");
+						System.out.print(schedule);
+						//if in active period
+						int timeOnMins = (schedule.getHourOn() * 60) + schedule.getMinuteOn();
+						int timeOffMins = (schedule.getHourOff() * 60) + schedule.getMinuteOff();
+						if (minute >= timeOnMins && minute <= timeOffMins) {
+							System.out.print(" **ACTIVE**");
+							//Only update the h/w status if they are false
+							heating = (heating) ? heating : schedule.getHeatingOn();
+							water = (water) ? water : schedule.getWaterOn();
+						}
+						System.out.println();
+					} else {
+						System.out.print("-");
+						System.out.println(schedule);
 					}
-					System.out.println();
-				} else {
-					System.out.print("-");
-					System.out.println(schedule);
 				}
-			}
-			System.out.println("***********************");
-			
+				System.out.println("***********************");
+			}	
 			//Send heating and water status
 			if (heating) {
 				control.turnHeatingOn();
@@ -71,6 +70,14 @@ public class Scheduler extends Thread{
 					control.toggleWaterBoostStatus();
 				}
 				control.turnWaterOff();
+			}
+			
+			//Check to see if the boost is on without the heating (boost set in mysql not by button)
+			if (control.isHeatingBoostOn() && !control.isHeatingOn()) {
+				control.toggleHeatingBoostStatus();
+			}
+			if (control.isWaterBoostOn() && !control.isWaterOn()) {
+				control.toggleWaterBoostStatus();
 			}
 			
 			try {
