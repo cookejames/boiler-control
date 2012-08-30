@@ -23,6 +23,11 @@ public class BoilerControl {
 		//Monitors the heating boost button for presses
 		Thread hBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH2, false, true));
 		hBoost.start();
+		Thread wConfigBoost = new Thread(new ConfigBoostMonitor("toggleWater", true, false));
+		wConfigBoost.start();
+		//Monitors the heating boost button for presses
+		Thread hConfigBoost = new Thread(new ConfigBoostMonitor("toggleHeating", false, true));
+		hConfigBoost.start();
 		//LCD output
 		Thread lcd = new Thread(new LcdOutput());
 		lcd.start();
@@ -52,6 +57,12 @@ public class BoilerControl {
 			System.out.println("Stopping heating boost monitor");
 			hBoost.interrupt();
 			hBoost.join();
+			System.out.println("Stopping config water boost monitor");
+			wConfigBoost.interrupt();
+			wConfigBoost.join();
+			System.out.println("Stopping config heating boost monitor");
+			hConfigBoost.interrupt();
+			hConfigBoost.join();
 			System.out.println("Stopping lcd output");
 			lcd.interrupt();
 			lcd.join();
