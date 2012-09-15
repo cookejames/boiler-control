@@ -12,8 +12,8 @@ import uk.co.jaynne.gpio.GpioPin;
 public class ControlBroker {
 	public static GpioPin RELAY1 = GpioPin.PIN8_GPIO14; //TODO get from DB
 	public static GpioPin RELAY2 = GpioPin.PIN10_GPIO15;
-	public static GpioPin SWITCH1 = GpioPin.PIN12_GPIO18;
-	public static GpioPin SWITCH2 = GpioPin.PIN13_GPIO21;
+	public static GpioPin SWITCH2 = GpioPin.PIN18_GPIO24;
+	public static GpioPin SWITCH1 = GpioPin.PIN26_GPIO7;
 	private static boolean RELAY_ON = false;
 	private static boolean RELAY_OFF = true;
 	private ConfigSource config;
