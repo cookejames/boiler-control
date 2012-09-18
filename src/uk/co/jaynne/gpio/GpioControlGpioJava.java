@@ -7,7 +7,7 @@ import be.doubleyouit.raspberry.gpio.GpioGateway;
 import be.doubleyouit.raspberry.gpio.impl.GpioGatewayImpl;
 
 /**
- * GPIO control using the gpio-java library
+ * GPIO control using the gpio-java library http://code.google.com/p/rpi-gpio-java/
  * @author James Cooke
  *
  */

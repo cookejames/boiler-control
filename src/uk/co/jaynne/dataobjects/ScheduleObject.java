@@ -4,7 +4,7 @@ package uk.co.jaynne.dataobjects;
  * Represents a single schedule item
  * @author James Cooke
  */
-public class ScheduleObject implements Comparable<ScheduleObject>{
+public class ScheduleObject{
 	private int id = 0;
 	private int group = 0;
 	private int day = 0;
@@ -111,21 +111,6 @@ public class ScheduleObject implements Comparable<ScheduleObject>{
 		return enabled;
 	}
 
-
-	@Override
-	/**
-	 * Orders by Day > minute on > minute off
-	 */
-	public int compareTo(ScheduleObject o) {
-		if (day != o.getDay()) {
-			return day - o.getDay();
-		}
-		if (minuteOn != o.getMinuteOn()) {
-			return minuteOn - o.getMinuteOn();
-		}
-		return minuteOff - o.getMinuteOff();
-	}
-	
 	public String toString() {
 		return "Day:" + day + " Time On:" + hourOn + ":" + minuteOn + " Time Off:" + 
 				hourOff + ":" + minuteOff + " Heating On:" + heatingOn + " Water On:" + 

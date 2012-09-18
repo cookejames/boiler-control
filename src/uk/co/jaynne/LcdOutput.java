@@ -52,9 +52,6 @@ public class LcdOutput extends Thread{
 		}
 		lcd.write(LcdDisplay.LCD_LINE1, "Shutting Down", LcdDisplay.CENTER);
 		lcd.write(LcdDisplay.LCD_LINE2, "Goodbye", LcdDisplay.CENTER);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
 		lcd.close();
 		System.out.println("LCD output interrupted");
 	}

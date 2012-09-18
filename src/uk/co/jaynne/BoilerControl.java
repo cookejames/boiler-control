@@ -65,7 +65,14 @@ public class BoilerControl {
 			hConfigBoost.join();
 			System.out.println("Stopping lcd output");
 			lcd.interrupt();
-			lcd.join();
+			while (lcd.isAlive()) {
+				lcd.join(500);
+				if (lcd.isAlive()) {
+					System.out.println("Stubourn thread, trying again");
+					lcd.interrupt();
+				}
+			}
+//			lcd.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

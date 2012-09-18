@@ -1,8 +1,8 @@
 package uk.co.jaynne.datasource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import uk.co.jaynne.dataobjects.ScheduleObject;
 import uk.co.jaynne.datasource.interfaces.ScheduleSource;
@@ -51,11 +51,11 @@ public class ScheduleSqlSource implements ScheduleSource{
 	 * @param day
 	 * @return
 	 */
-	public SortedSet<ScheduleObject> getByDay(int day) {
+	public Set<ScheduleObject> getByDay(int day) {
 		String sql = "SELECT * FROM `" + TABLE + "` WHERE `" + DAY + "` = '" + day + "'";
 		SqlStatement smt = new SqlStatement();
 		
-		TreeSet<ScheduleObject> schedules = new TreeSet<ScheduleObject>();
+		Set<ScheduleObject> schedules = new HashSet<ScheduleObject>();
 		try {
 			ResultSet rs = smt.query(sql);
 		

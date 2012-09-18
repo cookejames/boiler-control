@@ -1,7 +1,7 @@
 package uk.co.jaynne;
 
 import java.util.Calendar;
-import java.util.SortedSet;
+import java.util.Set;
 
 import uk.co.jaynne.dataobjects.ScheduleObject;
 import uk.co.jaynne.datasource.ScheduleSqlSource;
@@ -23,7 +23,7 @@ public class Scheduler extends Thread{
 			
 			ScheduleSource ss = new ScheduleSqlSource();
 			//Get the schedules for today
-			SortedSet<ScheduleObject> schedules = ss.getByDay(day);
+			Set<ScheduleObject> schedules = ss.getByDay(day);
 			if (schedules == null) {
 				System.out.println("No schedules today");
 			} else {

@@ -1,6 +1,6 @@
 package uk.co.jaynne.datasource.interfaces;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import uk.co.jaynne.dataobjects.ScheduleObject;
 
@@ -15,7 +15,7 @@ public interface ScheduleSource {
 	 * @param day
 	 * @return
 	 */
-	public SortedSet<ScheduleObject> getByDay(int day);
+	public Set<ScheduleObject> getByDay(int day);
 	public int update(ScheduleObject schedule);
 	public int add(ScheduleObject schedule);
 	public int delete(int key);

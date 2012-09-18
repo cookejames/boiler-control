@@ -20,7 +20,7 @@ public class BoostMonitor extends Thread{
 		this.heating = heating;
 		this.water = water;
 	}
-	public void run() { //TODO check DB for changes too 
+	public void run() {
 		GpioControl gpio = GpioControlFramboos.getInstance();
 		ControlBroker control = ControlBroker.getInstance();
 		gpio.setAsInput(pin);
