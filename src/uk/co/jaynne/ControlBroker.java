@@ -111,7 +111,8 @@ public class ControlBroker {
 	}
 	
 	public boolean isHolidayPeriod(){
-		return Calendar.getInstance().getTimeInMillis() < config.get("holidayUntil").getLongValue();
+		return Calendar.getInstance().getTimeInMillis() > config.get("holidayFrom").getLongValue() && 
+				Calendar.getInstance().getTimeInMillis() < config.get("holidayUntil").getLongValue();
 	}
 	
 	public void toggleWaterBoostStatus() {
