@@ -2,6 +2,7 @@ package uk.co.jaynne;
 
 import uk.co.jaynne.gpio.GpioControl;
 import uk.co.jaynne.gpio.GpioControlFramboos;
+import uk.co.jaynne.gpio.GpioControlPi4J;
 import uk.co.jaynne.gpio.GpioPin;
 
 public class BoostMonitor extends Thread{
@@ -21,7 +22,7 @@ public class BoostMonitor extends Thread{
 		this.water = water;
 	}
 	public void run() {
-		GpioControl gpio = GpioControlFramboos.getInstance();
+		GpioControl gpio = GpioControlPi4J.getInstance();
 		ControlBroker control = ControlBroker.getInstance();
 		gpio.setAsInput(pin);
 		

@@ -7,6 +7,7 @@ import uk.co.jaynne.datasource.ConfigSqlSource;
 import uk.co.jaynne.datasource.interfaces.ConfigSource;
 import uk.co.jaynne.gpio.GpioControl;
 import uk.co.jaynne.gpio.GpioControlFramboos;
+import uk.co.jaynne.gpio.GpioControlPi4J;
 import uk.co.jaynne.gpio.GpioPin;
 
 public class ControlBroker {
@@ -22,7 +23,7 @@ public class ControlBroker {
 	private GpioControl gpio;
 	
 	private ControlBroker() {
-		gpio = GpioControlFramboos.getInstance();
+		gpio = GpioControlPi4J.getInstance();
 		config = new ConfigSqlSource();
 		
     	//Start with water and heating off incase they have been left in an improper state
