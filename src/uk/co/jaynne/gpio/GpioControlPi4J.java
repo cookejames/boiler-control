@@ -2,10 +2,11 @@ package uk.co.jaynne.gpio;
 
 import java.util.HashMap;
 
-import com.pi4j.io.gpio.Gpio;
+import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.event.GpioListener;
 
 /**
  * GpioControl using the Pi4J library http://www.pi4j.com/ 
@@ -16,11 +17,11 @@ public class GpioControlPi4J implements GpioControl{
 	
 	private HashMap<uk.co.jaynne.gpio.GpioPin, com.pi4j.io.gpio.GpioPin> inpins;
 	private HashMap<uk.co.jaynne.gpio.GpioPin, com.pi4j.io.gpio.GpioPin> outpins;
-	private Gpio gpio;
+	private GpioController gpio;
 	private PinState outDefaultState;
 	
 	private GpioControlPi4J() {
-		gpio = GpioFactory.createInstance();
+		gpio = GpioFactory.getInstance();
 		inpins = new HashMap<uk.co.jaynne.gpio.GpioPin, com.pi4j.io.gpio.GpioPin>();
 		outpins = new HashMap<uk.co.jaynne.gpio.GpioPin, com.pi4j.io.gpio.GpioPin>();
 		outDefaultState = PinState.HIGH;
@@ -117,6 +118,24 @@ public class GpioControlPi4J implements GpioControl{
 	
 	public boolean isOutPin(GpioPin pin) {
 		return outpins.containsKey(pin);
+	}
+	
+	public void addListener(GpioPin pin, GpioListener listener) {
+		if (isOutPin(pin)) {
+			setAsInput(pin);
+		}
+		if (!isInPin(pin)) {
+			setAsInput(pin);
+		}
+		com.pi4j.io.gpio.GpioPin listenPin = inpins.get(pin);
+		listenPin.addListener(listener);
+	}
+	
+	public void removeListeners(GpioPin pin){
+		if (isOutPin(pin) || !isInPin(pin)) {
+			return;
+		}
+		inpins.get(pin).removeAllListeners();
 	}
 	
 	/**

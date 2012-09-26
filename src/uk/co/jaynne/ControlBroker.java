@@ -6,7 +6,6 @@ import uk.co.jaynne.dataobjects.ConfigObject;
 import uk.co.jaynne.datasource.ConfigSqlSource;
 import uk.co.jaynne.datasource.interfaces.ConfigSource;
 import uk.co.jaynne.gpio.GpioControl;
-import uk.co.jaynne.gpio.GpioControlFramboos;
 import uk.co.jaynne.gpio.GpioControlPi4J;
 import uk.co.jaynne.gpio.GpioPin;
 
@@ -37,6 +36,10 @@ public class ControlBroker {
 
 	public static ControlBroker getInstance() {
 		return SingletonHolder.INSTANCE;
+	}
+	
+	public GpioControl getGpio() {
+		return gpio;
 	}
 	
 	public boolean turnHeatingOn() {

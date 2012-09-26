@@ -17,6 +17,7 @@ public class BoilerControl {
 		//The scheduler thread deals with checking whether any channels are due to come on
 		Thread scheduler = new Thread(new Scheduler());
 		scheduler.start();
+		
 		//Monitors the water boost button for presses
 		Thread wBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH1, true, false));
 		wBoost.start();

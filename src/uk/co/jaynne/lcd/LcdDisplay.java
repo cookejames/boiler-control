@@ -1,7 +1,6 @@
 package uk.co.jaynne.lcd;
 
 import uk.co.jaynne.gpio.GpioControl;
-import uk.co.jaynne.gpio.GpioControlFramboos;
 import uk.co.jaynne.gpio.GpioControlPi4J;
 import uk.co.jaynne.gpio.GpioPin;
 

@@ -6,9 +6,9 @@
 	<classpathentry exported="true" kind="lib" path="libs/framboos-0.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/mysql-connector-java-5.1.21-bin.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/raspberrygpio.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/pi4j-core-0.0.1.jar">
+	<classpathentry exported="true" kind="lib" path="libs/pi4j-core-0.0.2-SNAPSHOT.jar" sourcepath="libs/pi4j-core-0.0.2-SNAPSHOT-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/boiler-control/libs/pi4j-core-0.0.1-SNAPSHOT-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/boiler-control/libs/pi4j-core-0.0.2-SNAPSHOT-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
