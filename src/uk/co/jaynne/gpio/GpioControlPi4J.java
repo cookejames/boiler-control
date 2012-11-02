@@ -145,14 +145,21 @@ public class GpioControlPi4J implements GpioControl{
 	 */
 	private Pin getPin(GpioPin pin) { //TODO include all pins
 		switch(pin) {
+			case PIN3_GPIO0: return Pin.GPIO_08;
+			case PIN5_GPIO1: return Pin.GPIO_09;
+			case PIN7_GPIO4: return Pin.GPIO_09;
 			case PIN8_GPIO14: return Pin.GPIO_15;
 			case PIN10_GPIO15: return Pin.GPIO_16;
+			case PIN11_GPIO17: return Pin.GPIO_00;
 			case PIN12_GPIO18: return Pin.GPIO_01;
 			case PIN13_GPIO21: return Pin.GPIO_02;
+			case PIN15_GPIO22: return Pin.GPIO_03;
 			case PIN16_GPIO23: return Pin.GPIO_04;
 			case PIN18_GPIO24: return Pin.GPIO_05;
 			case PIN19_GPIO10: return Pin.GPIO_12;
+			case PIN21_GPIO9: return Pin.GPIO_13;
 			case PIN22_GPIO25: return Pin.GPIO_06;
+			case PIN23_GPIO11: return Pin.GPIO_04;
 			case PIN24_GPIO8: return Pin.GPIO_10;
 			case PIN26_GPIO7: return Pin.GPIO_11;
 			default: return null;
