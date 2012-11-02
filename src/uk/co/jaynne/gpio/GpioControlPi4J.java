@@ -143,7 +143,7 @@ public class GpioControlPi4J implements GpioControl{
 	 * @param pin GpioPin
 	 * @return int pin no
 	 */
-	private Pin getPin(GpioPin pin) { //TODO include all pins
+	private Pin getPin(GpioPin pin) {
 		switch(pin) {
 			case PIN3_GPIO0: return Pin.GPIO_08;
 			case PIN5_GPIO1: return Pin.GPIO_09;
