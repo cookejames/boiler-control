@@ -14,7 +14,7 @@
 function start {
     LC=$(screen -ls | grep boilercontrol | wc -l)
     if [ $LC != 1 ]; then
-      screen -d -m -p 0 -S 'boilercontrol' /opt/boilercontrol/startcontrols.sh
+      screen -d -m -p 0 -S 'boilercontrol' /opt/boilercontrol/run.sh
     else
       echo "Boiler control is already running"
     fi
