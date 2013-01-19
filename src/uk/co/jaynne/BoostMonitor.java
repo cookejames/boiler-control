@@ -8,17 +8,20 @@ public class BoostMonitor extends Thread{
 	private GpioPin pin;
 	private boolean heating;
 	private boolean water;
+	private boolean pinsHigh;
 	
 	/**
 	 * Monitors a pin for presses and activates boost
 	 * @param pin the pin to monitor
 	 * @param water whether this pin controls water
 	 * @param heating whether this pin controls heating
+	 * @param pinsHigh are pins high (true) when pressed or low
 	 */
-	public BoostMonitor(GpioPin pin, boolean water, boolean heating) {
+	public BoostMonitor(GpioPin pin, boolean water, boolean heating, boolean pinsHigh) {
 		this.pin = pin;
 		this.heating = heating;
 		this.water = water;
+		this.pinsHigh = pinsHigh;
 	}
 	public void run() {
 		GpioControl gpio = GpioControlPi4J.getInstance();
@@ -28,7 +31,7 @@ public class BoostMonitor extends Thread{
 		while (!Thread.interrupted()) {
 			boolean status = gpio.getValue(pin);
 			try {
-			if (!status) {
+			if (status == pinsHigh) {
 				if (water) {
 					control.toggleWaterBoostStatus();
 				}

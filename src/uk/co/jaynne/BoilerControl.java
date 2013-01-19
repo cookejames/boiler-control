@@ -4,31 +4,40 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import uk.co.jaynne.datasource.ConfigSqlSource;
+import uk.co.jaynne.datasource.interfaces.ConfigSource;
+
 /**
  * Program to control a boiler with two channels - heating and water.
  * Schedules are set in a database with the option to override them via
  * "boost" buttons
  * @author James Cooke
+ * @version 1.1
  *
  */
 public class BoilerControl {
 
 	public static void main(String[] args) {
+		
+		ConfigSource config = new ConfigSqlSource();
 		//The scheduler thread deals with checking whether any channels are due to come on
 		Thread scheduler = new Thread(new Scheduler());
 		scheduler.start();
 		
 		//Monitors the water boost button for presses
-		Thread wBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH1, true, false));
+		boolean pinsHigh = false; //pins are default low
+		//Get the configured pins value
+		if (config.get("pinsHigh") != null) {
+			pinsHigh = config.get("pinsHigh").getBoolValue();
+		}
+		Thread wBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH1, true, false, pinsHigh));
 		wBoost.start();
 		//Monitors the heating boost button for presses
-		Thread hBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH2, false, true));
+		Thread hBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH2, false, true, pinsHigh));
 		hBoost.start();
-		Thread wConfigBoost = new Thread(new ConfigBoostMonitor("toggleWater", true, false));
-		wConfigBoost.start();
-		//Monitors the heating boost button for presses
-		Thread hConfigBoost = new Thread(new ConfigBoostMonitor("toggleHeating", false, true));
-		hConfigBoost.start();
+		//Socket server
+		Thread socketServer = new Thread(new SocketServer());
+		socketServer.start();
 		//LCD output
 		Thread lcd = new Thread(new LcdOutput());
 		lcd.start();
@@ -58,12 +67,9 @@ public class BoilerControl {
 			System.out.println("Stopping heating boost monitor");
 			hBoost.interrupt();
 			hBoost.join();
-			System.out.println("Stopping config water boost monitor");
-			wConfigBoost.interrupt();
-			wConfigBoost.join();
-			System.out.println("Stopping config heating boost monitor");
-			hConfigBoost.interrupt();
-			hConfigBoost.join();
+			System.out.println("Stopping socket server");
+			socketServer.interrupt();
+			socketServer.join();
 			System.out.println("Stopping lcd output");
 			lcd.interrupt();
 			while (lcd.isAlive()) {
@@ -73,7 +79,6 @@ public class BoilerControl {
 					lcd.interrupt();
 				}
 			}
-//			lcd.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

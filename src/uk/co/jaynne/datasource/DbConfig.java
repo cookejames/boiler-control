@@ -6,7 +6,7 @@ package uk.co.jaynne.datasource;
  */
 public class DbConfig {
 	
-	public static String URL = "jdbc:mysql://localhost:3306/pi";
+	public static String URL = "jdbc:mysql://127.0.0.1:3306/pi";
 	public static String USER = "pi";
 	public static String PASSWORD = "raspberry";
 

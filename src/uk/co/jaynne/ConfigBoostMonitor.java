@@ -25,8 +25,9 @@ public class ConfigBoostMonitor extends Thread{
 		ControlBroker control = ControlBroker.getInstance();
 		
 		while (!Thread.interrupted()) {
-			boolean status = config.get(key).getBoolValue();
+			
 			try {
+				boolean status = config.get(key).getBoolValue();
 			if (status) {
 				if (water) {
 					control.toggleWaterBoostStatus();
@@ -38,6 +39,9 @@ public class ConfigBoostMonitor extends Thread{
 			}
 			Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
+				break;
+			} catch (NullPointerException e) {
+				System.out.println("Config Boost monitor unable to access config");
 				break;
 			}
 		}

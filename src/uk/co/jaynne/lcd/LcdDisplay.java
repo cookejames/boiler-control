@@ -24,8 +24,8 @@ public class LcdDisplay {
 	private boolean LCD_CMD = false;
 	public static char LCD_LINE1 = 0x80;
 	public static char LCD_LINE2 = 0xC0;
-	private int E_PULSE = 1;
-	private int E_DELAY = 1;
+	private int E_PULSE = 50000;
+	private int E_DELAY = 50000;
 	public static final int LEFT = 0;
 	public static final int RIGHT = 1;
 	public static final int CENTER = 2;

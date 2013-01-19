@@ -17,6 +17,12 @@ public class ControlBroker {
 	private static boolean RELAY_ON = false;
 	private static boolean RELAY_OFF = true;
 	private ConfigSource config;
+	private boolean heatingOn = false;
+	private boolean heatingOnBoost = false;
+	private long heatingBoostOffTime = 0;
+	private boolean waterOn = false;
+	private boolean waterOnBoost = false;
+	private long waterBoostOffTime = 0;
 	
 	
 	private GpioControl gpio;
@@ -56,7 +62,7 @@ public class ControlBroker {
 	
 	private boolean activateHeating() {
 		gpio.setValue(RELAY2, RELAY_ON);
-		config.set("heatingStatus", true);
+		heatingOn = true;
 		System.out.println("**HEATING ON, ITS GONA GET TOASTY**");
 		return true;
 	}
@@ -73,7 +79,7 @@ public class ControlBroker {
 	
 	private boolean deactivateHeating() {
 		gpio.setValue(RELAY2, RELAY_OFF);
-		config.set("heatingStatus", false);
+		heatingOn = false;
 		System.out.println("**HEATING OFF, BRR**");
 		return true;
 	}
@@ -92,7 +98,7 @@ public class ControlBroker {
 	
 	private boolean activateWater() {
 		gpio.setValue(RELAY1, RELAY_ON);
-		config.set("waterStatus", true);
+		waterOn = true;
 		System.out.println("**WATER ON, YOU CAN SHOWER IN A BIT**");
 		return true;
 	}
@@ -109,34 +115,47 @@ public class ControlBroker {
 	
 	private boolean deactivateWater() {
 		gpio.setValue(RELAY1, RELAY_OFF);
-		config.set("waterStatus", false);
+		waterOn = false;
 		System.out.println("**WATER OFF, BETTER BE CLEAN ALREADY**");
 		return true;
 	}
 	
 	public boolean isHolidayPeriod(){
-		return Calendar.getInstance().getTimeInMillis() > config.get("holidayFrom").getLongValue() && 
-				Calendar.getInstance().getTimeInMillis() < config.get("holidayUntil").getLongValue();
+		ConfigObject holidayFrom = config.get("holidayFrom");
+		ConfigObject holidayUntil = config.get("holidayUntil");
+		if (holidayFrom != null && holidayUntil != null) {
+			return Calendar.getInstance().getTimeInMillis() > holidayFrom.getLongValue() && 
+					Calendar.getInstance().getTimeInMillis() < holidayUntil.getLongValue();
+		} else {
+			return false;
+		}
+		
 	}
 	
-	public void toggleWaterBoostStatus() {
-		boolean waterBoost = isWaterBoostOn();
-		if (waterBoost) {
-			System.out.println("**WATER BOOST TOGGLED OFF**");
-			config.set("waterBoost", !waterBoost);
+	public boolean toggleWaterBoostStatus() {
+		int boostTimeInMins = config.get("boostTime").getIntValue();
+		return toggleWaterBoostStatus(boostTimeInMins);
+	}
+	
+	public boolean toggleWaterBoostStatus(int minutes) {
+		if (isWaterBoostOn()) { //ON so turn off
+			System.out.println("**Water BOOST TOGGLED OFF**");
+			waterOnBoost = false;
+			turnWaterOff();
+			return isWaterOn();
+		} else if (isHolidayPeriod()) {
+			System.out.println("**WATER BOOST IS ON HOLIDAY**");
+			turnWaterOff();
+			return isWaterOn();
 		} else {
-			if (isHolidayPeriod()) {
-				System.out.println("**WATER BOOST IS ON HOLIDAY**");
-				return;
-			}
 			System.out.println("**WATER BOOST TOGGLED ON**");
 			
 			long thistime = Calendar.getInstance().getTimeInMillis();
-			int boostTimeInMins = config.get("boostTime").getIntValue();
-			long boostTimeInMillis = boostTimeInMins * 60 * 1000;
-			config.set("waterBoostOffTime", thistime + boostTimeInMillis);
-			config.set("waterBoost", !waterBoost);
+			long boostTimeInMillis = minutes * 60 * 1000;
+			waterBoostOffTime = thistime + boostTimeInMillis;
+			waterOnBoost = true;
 			turnWaterOn();
+			return isWaterOn();
 		}
 	}
 	
@@ -145,41 +164,37 @@ public class ControlBroker {
 	 * @return long
 	 */
 	public long getWaterBoostOffTime() {
-		ConfigObject time = config.get("waterBoostOffTime");
-		if (time != null) {
-			return time.getLongValue();
-		} else {
-			return 0;
-		}
+		return waterBoostOffTime;
 	}
 	
 	public boolean isWaterBoostOn() {
-		ConfigObject water = config.get("waterBoost");
-		if (water == null) {
-			return false;
-		} else {
-			return water.getBoolValue();
-		}
+		return waterOnBoost;
 	}
 	
-	public void toggleHeatingBoostStatus() {
-		boolean heatingBoost = isHeatingBoostOn();
-		if (heatingBoost) {
+	public boolean toggleHeatingBoostStatus() {
+		int boostTimeInMins = config.get("boostTime").getIntValue();
+		return toggleHeatingBoostStatus(boostTimeInMins);
+	}
+	
+	public boolean toggleHeatingBoostStatus(int minutes) {
+		if (isHeatingBoostOn()) { //ON so turn off
 			System.out.println("**HEATING BOOST TOGGLED OFF**");
-			config.set("heatingBoost", !heatingBoost);
+			heatingOnBoost = false;
+			turnHeatingOff();
+			return isHeatingOn();
+		} else if (isHolidayPeriod()) {
+			System.out.println("**HEATING BOOST IS ON HOLIDAY**");
+			turnHeatingOff();
+			return isHeatingOn();
 		} else {
-			if (isHolidayPeriod()) {
-				System.out.println("**HEATING BOOST IS ON HOLIDAY**");
-				return;
-			}
 			System.out.println("**HEATING BOOST TOGGLED ON**");
 			
 			long thistime = Calendar.getInstance().getTimeInMillis();
-			int boostTimeInMins = config.get("boostTime").getIntValue();
-			long boostTimeInMillis = boostTimeInMins * 60 * 1000;
-			config.set("heatingBoostOffTime", thistime + boostTimeInMillis);
-			config.set("heatingBoost", !heatingBoost);
+			long boostTimeInMillis = minutes * 60 * 1000;
+			heatingBoostOffTime = thistime + boostTimeInMillis;
+			heatingOnBoost = true;
 			turnHeatingOn();
+			return isHeatingOn();
 		}
 	}
 	
@@ -188,29 +203,19 @@ public class ControlBroker {
 	 * @return long
 	 */
 	public long getHeatingBoostOffTime() {
-		ConfigObject time = config.get("heatingBoostOffTime");
-		if (time != null) {
-			return time.getLongValue();
-		} else {
-			return 0;
-		}
+		return heatingBoostOffTime;
 	}
 	
 	public boolean isHeatingBoostOn() {
-		ConfigObject heating = config.get("heatingBoost");
-		if (heating == null) {
-			return false;
-		} else {
-			return heating.getBoolValue();
-		}
+		return heatingOnBoost;
 	}
 	
 	public boolean isHeatingOn() {
-		return config.get("heatingStatus").getBoolValue();
+		return heatingOn;
 	}
 	
 	public boolean isWaterOn() {
-		return config.get("waterStatus").getBoolValue();
+		return waterOn;
 	}
 	
 	/**

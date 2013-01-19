@@ -4,6 +4,23 @@ Java code to control relays via a raspberry pi.
 Features GPIO code, output to a 16x2 LCD and mysql access.
 This is tested with the Oracle JDK and as such requires the Debian softfloat install. If you use raspbian and openjdk I can't verify any problems you may have although it could run fine.
 
+changelog
+==============
+v1.2
+-added choice of boost time to frontend
+v1.1
+-changed communication between php and java to mostly use sockets rather than the database
+-boosting boiler now instantly shows it is on/off
+-removed many database calls from java and php side - should reduce CPU load
+-now shows heating/water state and boost state separately
+-boost time remaining now shown
+-moved pins configuration to database, create entry in configuration table with key pinsHigh and the value
+	true (high) or false (low) when pressed
+v1.0
+-release
+
+TODO
+-make sure all configuration options are in the database
 
 Instructions
 ==============
@@ -27,7 +44,7 @@ unzip master.zip
 sudo mkdir /opt/boilercontrol
 sudo mv boiler-control-master/libs/ /opt/boilercontrol/
 sudo mv boiler-control-master/scripts/boilercontrol/java/* /opt/boilercontrol/
-sudo mv boiler-control-master/scripts/boilercontrol/init.d/* /etc/init.d/
+sudo mv boiler-control-master/scripts/boilercontrol/* /etc/init.d/
 sudo chmod +x /opt/boilercontrol/*.sh
 sudo chmod +x /etc/init.d/boilercontrol
 </code></pre>

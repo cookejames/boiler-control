@@ -53,33 +53,30 @@ public class Scheduler extends Thread{
 					}
 				}
 				System.out.println("***********************");
-			}	
-			//Send heating and water status
-			if (heating) {
+			}
+			
+			//Change the heating controls based on the schedule
+			if (heating) { //scheduled so turn on
 				control.turnHeatingOn();
-			} else { //heating isn't on check boost status
-				if (control.isHeatingBoostOn() && calendar.getTimeInMillis() > control.getHeatingBoostOffTime()) {
-					control.toggleHeatingBoostStatus();
-				}
+			} else if (control.isHeatingBoostOn() && 
+					calendar.getTimeInMillis() > control.getHeatingBoostOffTime()) {
+				//If boost is on but it is past the boost time turn off
+				control.toggleHeatingBoostStatus();
+			} else { //no schedule or boost so turn off
 				control.turnHeatingOff();
 			}
-			if (water) {
+			
+			//Change the water controls based on the schedule
+			if (water) { //scheduled so turn on
 				control.turnWaterOn();
-			} else { //water isn't on check boost status
-				if (control.isWaterBoostOn() && calendar.getTimeInMillis() > control.getWaterBoostOffTime()) {
-					control.toggleWaterBoostStatus();
-				}
+			} else if (control.isWaterBoostOn() && 
+					calendar.getTimeInMillis() > control.getWaterBoostOffTime()) {
+				//If boost is on but it is past the boost time turn off
+				control.toggleWaterBoostStatus();
+			} else { //no schedule or boost so turn off
 				control.turnWaterOff();
 			}
-			
-			//Check to see if the boost is on without the heating (boost set in mysql not by button)
-			if (control.isHeatingBoostOn() && !control.isHeatingOn()) {
-				control.toggleHeatingBoostStatus();
-			}
-			if (control.isWaterBoostOn() && !control.isWaterOn()) {
-				control.toggleWaterBoostStatus();
-			}
-			
+
 			try {
 				Thread.sleep(20000);
 			} catch (InterruptedException e) {
