@@ -4,6 +4,8 @@ Java code to control relays via a raspberry pi.
 Features GPIO code, output to a 16x2 LCD and mysql access.
 This is tested with the Oracle JDK and as such requires the Debian softfloat install. If you use raspbian and openjdk I can't verify any problems you may have although it could run fine.
 
+For support please use this Raspberry Pi forum thread http://www.raspberrypi.org/phpBB3/viewtopic.php?f=37&t=22244
+
 changelog
 ==============
 v1.2
