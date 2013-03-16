@@ -51,7 +51,7 @@ public class LcdDisplay {
 	}
 	
 
-	public void close() {
+	public synchronized void close() {
 		gpio.close(LCD_RS);
 		gpio.close(LCD_E);
 		gpio.close(LCD_D4);
@@ -65,7 +65,7 @@ public class LcdDisplay {
 	 * @param line the line to write to
 	 * @param message messages > the screen width are truncated
 	 */
-	public void write(char line, String message) {
+	public synchronized void write(char line, String message) {
 		write(line, message, LEFT);
 	}
 	
@@ -75,7 +75,7 @@ public class LcdDisplay {
 	 * @param message messages > the screen width are truncated
 	 * @param justification set the justification of the message
 	 */
-	public void write(char line, String message, int justification) {
+	public synchronized void write(char line, String message, int justification) {
 		//Set the line to write
 		lcd_byte(line, LCD_CMD);
 		
@@ -110,14 +110,14 @@ public class LcdDisplay {
 		} catch (InterruptedException e) {}
 	}
 
-	private void lcd_string(String message) {
+	private synchronized void lcd_string(String message) {
 		char[] characters = message.toCharArray();
 		for (int i = 0; i < LCD_WIDTH; i++) {
 			lcd_byte((int)characters[i], LCD_CHR);
 		}
 	}
 
-	private void lcd_init() {
+	private synchronized void lcd_init() {
 		// Initialised the display
 		lcd_byte((char)0x33, LCD_CMD);
 		lcd_byte((char)0x32, LCD_CMD);
@@ -127,7 +127,7 @@ public class LcdDisplay {
 		lcd_byte((char)0x01, LCD_CMD);
 	}
 
-	private void lcd_byte(int bits, boolean mode) {
+	private synchronized void lcd_byte(int bits, boolean mode) {
 		/**
 		 * Send byte to data pins bits = data mode = True for character False
 		 * for command
