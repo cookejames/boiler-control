@@ -30,17 +30,17 @@ public class BoilerControl {
 		if (config.get("pinsHigh") != null) {
 			pinsHigh = config.get("pinsHigh").getBoolValue();
 		}
-		Thread wBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH1, true, false, pinsHigh));
-		wBoost.start();
+//		Thread wBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH1, true, false, pinsHigh));
+//		wBoost.start();
 		//Monitors the heating boost button for presses
-		Thread hBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH2, false, true, pinsHigh));
-		hBoost.start();
+//		Thread hBoost = new Thread(new BoostMonitor(ControlBroker.SWITCH2, false, true, pinsHigh));
+//		hBoost.start();
 		//Socket server
 		Thread socketServer = new Thread(new SocketServer());
 		socketServer.start();
 		//LCD output
-		Thread lcd = new Thread(new LcdOutput());
-		lcd.start();
+//		Thread lcd = new Thread(new LcdOutput());
+//		lcd.start();
 
 		// open up standard input
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -62,23 +62,23 @@ public class BoilerControl {
 			scheduler.interrupt();
 			scheduler.join();
 			System.out.println("Stopping water boost monitor");
-			wBoost.interrupt();
-			wBoost.join();
+//			wBoost.interrupt();
+//			wBoost.join();
 			System.out.println("Stopping heating boost monitor");
-			hBoost.interrupt();
-			hBoost.join();
+//			hBoost.interrupt();
+//			hBoost.join();
 			System.out.println("Stopping socket server");
 			socketServer.interrupt();
 			socketServer.join();
 			System.out.println("Stopping lcd output");
-			lcd.interrupt();
-			while (lcd.isAlive()) {
-				lcd.join(500);
-				if (lcd.isAlive()) {
-					System.out.println("Stubourn thread, trying again");
-					lcd.interrupt();
-				}
-			}
+//			lcd.interrupt();
+//			while (lcd.isAlive()) {
+//				lcd.join(500);
+//				if (lcd.isAlive()) {
+//					System.out.println("Stubourn thread, trying again");
+//					lcd.interrupt();
+//				}
+//			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
