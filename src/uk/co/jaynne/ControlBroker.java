@@ -10,7 +10,7 @@ import uk.co.jaynne.gpio.GpioControlPi4J;
 import uk.co.jaynne.gpio.GpioPin;
 
 public class ControlBroker {
-	public static GpioPin RELAY2 = GpioPin.PIN24_GPIO8; //heating
+	public static GpioPin RELAY2 = GpioPin.PIN18_GPIO24; //heating
 	public static GpioPin RELAY1 = GpioPin.PIN23_GPIO11; //water
 	public static GpioPin SWITCH1 = GpioPin.PIN18_GPIO24;
 	public static GpioPin SWITCH2 = GpioPin.PIN26_GPIO7;
